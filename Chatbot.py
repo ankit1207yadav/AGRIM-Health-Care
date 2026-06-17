@@ -32,7 +32,7 @@ neo4j_graph = Neo4jGraph(refresh_schema=False)
 
 
 
-os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
+os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY") or getpass.getpass("OpenAI API Key:")
 #"gpt-4-0125-preview"
 model = ChatOpenAI(model="gpt-4-turbo", temperature=0.2)
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")

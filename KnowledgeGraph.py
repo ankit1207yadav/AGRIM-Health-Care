@@ -26,7 +26,7 @@ os.environ["NEO4J_URI"] = "neo4j+s://50ce1299.databases.neo4j.io"
 os.environ["NEO4J_USERNAME"] = "neo4j"
 # os.environ["NEO4J_PASSWORD"] = "jsSYcLP-a_JvuHYh7xKf5890FOrn1El5BvlXUQGr8hM"
 os.environ["NEO4J_PASSWORD"] = "yLNiXxofzR4GJ3GjUUG6GdjDJ5oGAY4vvCSJY45DOKw"
-os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
+os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY") or getpass.getpass("OpenAI API Key:")
 
 # Initialize Neo4j graph
 graph = Neo4jGraph(refresh_schema=False)
