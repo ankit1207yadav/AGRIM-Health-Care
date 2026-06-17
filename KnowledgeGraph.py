@@ -35,16 +35,20 @@ graph.query("CREATE CONSTRAINT IF NOT EXISTS FOR (c:AtomicFact) REQUIRE c.id IS 
 graph.query("CREATE CONSTRAINT IF NOT EXISTS FOR (c:KeyElement) REQUIRE c.id IS UNIQUE")
 graph.query("CREATE CONSTRAINT IF NOT EXISTS FOR (d:Document) REQUIRE d.id IS UNIQUE")
 
-# Extract text from PDF
-doc_content_chars_max = 20000
-pdf_path = "./sample.pdf"
-reader = PdfReader(pdf_path)
-extracted_text = ""
-for page in reader.pages:
-    page_text = page.extract_text()
-    if page_text:
-        extracted_text += page_text
-text = extracted_text[:doc_content_chars_max]
+text = ""
+
+def extract_text_from_pdf(pdf_path: str, max_chars: int = 20000) -> str:
+    try:
+        reader = PdfReader(pdf_path)
+        extracted_text = ""
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                extracted_text += page_text
+        return extracted_text[:max_chars]
+    except Exception as e:
+        print(f"Error reading PDF {pdf_path}: {e}")
+        return ""
 
 # Define prompt templates
 construction_system = """
@@ -147,9 +151,18 @@ MERGE (start)-[:NEXT]->(end)
 #     await process_document(text, "Sample", chunk_size=500, chunk_overlap=100)
 
 
-async def main():
-    await process_document(text, "Sample", chunk_size=500, chunk_overlap=100)
-    pass
+async def main(file_path=None):
+    if file_path is None:
+        file_path = "./sample.pdf"
+    
+    extracted_text = extract_text_from_pdf(file_path)
+    if not extracted_text:
+        print(f"Error: No text extracted from {file_path}")
+        return "Failure: No text extracted"
+    
+    document_name = os.path.basename(file_path).split('.')[0]
+    await process_document(extracted_text, document_name, chunk_size=500, chunk_overlap=100)
+    return "Success"
 
 if __name__ == "__main__":
     try:

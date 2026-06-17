@@ -26,7 +26,7 @@ async def generate_graph(file: UploadFile = File(...)):
         return {"error": f"Error saving file: {e}"}
 
     try:
-        result = KnowledgeGraph.main(file_location)
+        result = await KnowledgeGraph.main(file_location)
         print(f"Graph generation result: {result}")
     except Exception as e:
         return {"error": f"Error generating graph: {e}"}
